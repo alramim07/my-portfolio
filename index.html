@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Al Ramim | Backend & Systems Architecture Engineer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-main: #06080d;
+      --bg-card: #0b0f17;
+      --bg-card-hover: #101622;
+      --border: #1a2233;
+      --border-neon: rgba(0, 245, 155, 0.35);
+      --border-cyan: rgba(0, 216, 246, 0.35);
+      --accent-green: #00f59b;
+      --accent-cyan: #00d8f6;
+      --accent-purple: #9d4edd;
+      --text-main: #f0f4fc;
+      --text-muted: #8b9bb4;
+      --font-sans: 'Inter', -apple-system, sans-serif;
+      --font-mono: 'Fira Code', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* Floating Pill Navigation */
+    .nav-wrap {
+      position: fixed;
+      top: 24px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .nav-pill {
+      pointer-events: auto;
+      background: rgba(11, 15, 23, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 24px;
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .nav-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: color 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: var(--text-main);
+    }
+
+    .nav-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      box-shadow: 0 0 8px var(--accent-green);
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Hero Section */
+    .hero-section {
+      padding-top: 150px;
+      padding-bottom: 70px;
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .hero-greeting {
+      font-size: 1rem;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      font-weight: 400;
+      letter-spacing: 0.5px;
+    }
+
+    .hero-title {
+      font-size: 3.5rem;
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      color: #ffffff;
+    }
+
+    .hero-desc {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      font-weight: 400;
+    }
+
+    .hero-desc .highlight {
+      color: var(--accent-purple);
+      font-weight: 600;
+    }
+
+    /* Social Icons below title */
+    .hero-socials {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 36px;
+    }
+
+    .social-icon-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-main);
+      text-decoration: none;
+      transition: all 0.25s ease;
+    }
+
+    .social-icon-btn:hover {
+      border-color: var(--accent-cyan);
+      transform: translateY(-2px);
+      box-shadow: 0 0 15px rgba(0, 216, 246, 0.2);
+    }
+
+    /* Infinite Marquee Strip */
+    .tech-ticker-wrap {
+      width: 100vw;
+      margin-left: calc(-50vw + 50%);
+      overflow: hidden;
+      padding: 24px 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: rgba(8, 11, 18, 0.6);
+      position: relative;
+    }
+
+    .tech-ticker-wrap::before, .tech-ticker-wrap::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 140px;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .tech-ticker-wrap::before {
+      left: 0;
+      background: linear-gradient(to right, var(--bg-main), transparent);
+    }
+
+    .tech-ticker-wrap::after {
+      right: 0;
+      background: linear-gradient(to left, var(--bg-main), transparent);
+    }
+
+    .ticker-track {
+      display: flex;
+      width: max-content;
+      animation: tickerScroll 24s linear infinite;
+    }
+
+    .ticker-track:hover {
+      animation-play-state: paused;
+    }
+
+    .ticker-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 32px;
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.3px;
+      transition: color 0.2s ease;
+    }
+
+    .ticker-item:hover {
+      color: var(--text-main);
+    }
+
+    .ticker-item svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    @keyframes tickerScroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* Architecture Sections */
+    .section-block {
+      padding: 90px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-header {
+      margin-bottom: 40px;
+    }
+
+    .section-tag {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .section-heading {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+
+    /* Project Cards */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 24px;
+    }
+
+    .project-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .project-card:hover {
+      border-color: var(--border-neon);
+      transform: translateY(-4px);
+      box-shadow: 0 14px 35px rgba(0, 245, 155, 0.08);
+    }
+
+    .project-badge {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: rgba(0, 245, 155, 0.1);
+      color: var(--accent-green);
+      font-weight: 600;
+      display: inline-block;
+      margin-bottom: 14px;
+    }
+
+    .project-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+
+    .project-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .project-tag {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.04);
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .project-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--accent-cyan);
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    .project-link:hover {
+      text-decoration: underline;
+    }
+
+    /* What I Do Accordion + Matrix Terminal */
+    .what-i-do-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 36px;
+      align-items: stretch;
+    }
+
+    .accordion-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .accordion-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: border-color 0.2s ease;
+    }
+
+    .accordion-item:hover, .accordion-item.open {
+      border-color: rgba(157, 78, 221, 0.4);
+    }
+
+    .accordion-header {
+      padding: 18px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .accordion-header .acc-title-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .accordion-header svg {
+      width: 18px;
+      height: 18px;
+      color: var(--accent-purple);
+      transition: transform 0.25s ease;
+    }
+
+    .accordion-item.open .accordion-header svg.chevron {
+      transform: rotate(180deg);
+    }
+
+    .accordion-content {
+      padding: 0 22px 18px 22px;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      display: none;
+    }
+
+    .accordion-item.open .accordion-content {
+      display: block;
+    }
+
+    /* Terminal Matrix Code Buffer Box */
+    .matrix-terminal-card {
+      background: #07090e;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
+    }
+
+    .terminal-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .terminal-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .terminal-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .matrix-code-box {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      line-height: 1.65;
+      letter-spacing: 0.5px;
+      color: #9d4edd;
+      word-break: break-all;
+      overflow: hidden;
+      height: 250px;
+      text-shadow: 0 0 10px rgba(157, 78, 221, 0.4);
+      user-select: none;
+    }
+
+    /* Custom Modern Futuristic Footer */
+    footer {
+      padding: 60px 0 35px 0;
+      background: #040609;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-main-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 30px;
+      margin-bottom: 50px;
+    }
+
+    .footer-left-col {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .footer-socials {
+      display: flex;
+      gap: 12px;
+    }
+
+    .footer-social-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-main);
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .footer-social-btn:hover {
+      border-color: var(--accent-cyan);
+      transform: translateY(-2px);
+    }
+
+    /* Contact Now Button (Replacing Likes) */
+    .contact-now-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(11, 15, 23, 0.85);
+      border: 1px solid var(--border-neon);
+      border-radius: 999px;
+      padding: 10px 22px;
+      color: var(--accent-green);
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      box-shadow: 0 0 15px rgba(0, 245, 155, 0.1);
+    }
+
+    .contact-now-btn:hover {
+      background: var(--accent-green);
+      color: #06080d;
+      box-shadow: 0 0 25px rgba(0, 245, 155, 0.4);
+      transform: translateY(-2px);
+    }
+
+    /* Middle Specs (Section Directory) */
+    .footer-section-directory {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+    }
+
+    .directory-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-muted);
+    }
+
+    .directory-label {
+      color: #55657e;
+      min-width: 90px;
+    }
+
+    .directory-row a {
+      color: var(--text-main);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .directory-row a:hover {
+      color: var(--accent-cyan);
+    }
+
+    /* Footer Live Terminal Card (Replacing Spotify) */
+    .footer-terminal-box {
+      background: #080c14;
+      border: 1px solid var(--border-cyan);
+      border-radius: 12px;
+      padding: 16px 20px;
+      width: 340px;
+      box-shadow: 0 10px 30px rgba(0, 216, 246, 0.08);
+      position: relative;
+    }
+
+    .footer-term-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--accent-cyan);
+      margin-bottom: 10px;
+      border-bottom: 1px solid rgba(0, 216, 246, 0.15);
+      padding-bottom: 6px;
+    }
+
+    .footer-term-content {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      line-height: 1.6;
+      color: #8b9bb4;
+      height: 80px;
+      overflow: hidden;
+      word-break: break-all;
+      user-select: none;
+    }
+
+    .footer-term-content span.highlight {
+      color: var(--accent-purple);
+    }
+
+    .footer-bottom-copy {
+      text-align: center;
+      font-size: 0.8rem;
+      color: #55657e;
+      border-top: 1px solid rgba(26, 34, 51, 0.5);
+      padding-top: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .hero-section {
+        grid-template-columns: 1fr;
+        padding-top: 120px;
+      }
+      .hero-title {
+        font-size: 2.6rem;
+      }
+      .what-i-do-grid {
+        grid-template-columns: 1fr;
+      }
+      .footer-main-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .footer-terminal-box {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Navigation -->
+  <div class="nav-wrap">
+    <nav class="nav-pill">
+      <a href="#home" class="nav-link active">
+        <span class="nav-dot"></span>
+        Home
+      </a>
+      <a href="#what-i-do" class="nav-link">Architecture</a>
+      <a href="#projects" class="nav-link">Projects</a>
+      <a href="#contact" class="nav-link">Contact</a>
+    </nav>
+  </div>
+
+  <main class="container">
+    
+    <!-- Hero Section -->
+    <section id="home" class="hero-section">
+      <div>
+        <div class="hero-greeting">Hi, I'm Al Ramim</div>
+        <h1 class="hero-title">Software<br>Architect &amp; Backend</h1>
+        <p class="hero-desc">
+          Designing resilient distributed systems, transactional APIs, and high-concurrency microservices with cutting-edge <span class="highlight">backend engineering</span>.
+        </p>
+        
+        <div class="hero-socials">
+          <!-- GitHub -->
+          <a href="https://github.com/alramim07" target="_blank" class="social-icon-btn" title="GitHub">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+            </svg>
+          </a>
+          <!-- Terminal Direct -->
+          <a href="mailto:sakibramim4@gmail.com" class="social-icon-btn" title="Email Dispatch">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+          </a>
+          <!-- Raw Architecture Feed -->
+          <a href="#projects" class="social-icon-btn" title="Selected Systems">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Right Column: Live Matrix Buffer Box -->
+      <div class="matrix-terminal-card">
+        <div class="terminal-top-bar">
+          <div class="terminal-dots">
+            <span class="terminal-dot" style="background: #ff5f56;"></span>
+            <span class="terminal-dot" style="background: #ffbd2e;"></span>
+            <span class="terminal-dot" style="background: #27c93f;"></span>
+          </div>
+          <span>daemon: kernel_stream.sock</span>
+        </div>
+        <div id="heroMatrixCode" class="matrix-code-box">
+          Initializing memory buffer...
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Auto Scrolling Tech Stack Marquee Strip -->
+  <div class="tech-ticker-wrap">
+    <div class="ticker-track" id="tickerTrack">
+      <!-- PHP -->
+      <div class="ticker-item">
+        <svg viewBox="0 0 128 128" fill="currentColor"><path d="M60.1 53.6c-1.8 8.7-7 13.9-15.6 13.9h-7.8l-4.5 22.4h-9.9l9.3-46.6h17.8c7.4 0 12.5 3.5 10.7 10.3zm-17.5 5.5h6.6c3.9 0 6.6-2.1 7.3-6 .8-3.7-.9-5.5-4.8-5.5h-6.7l-2.4 11.5zm57.2-5.5c-1.8 8.7-7 13.9-15.6 13.9h-7.8l-4.5 22.4H62l9.3-46.6h17.8c7.4 0 12.5 3.5 10.7 10.3zm-17.5 5.5h6.6c3.9 0 6.6-2.1 7.3-6 .8-3.7-.9-5.5-4.8-5.5h-6.7l-2.4 11.5z"/></svg>
+        PHP 8.3
+      </div>
+      <!-- Laravel -->
+      <div class="ticker-item">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.2 5.1L12.7.2c-.4-.2-.9-.2-1.3 0L2.8 5.1c-.5.3-.8.8-.8 1.4v9.9c0 .6.3 1.1.8 1.4l8.5 4.9c.2.1.4.2.7.2.2 0 .5-.1.7-.2l8.5-4.9c.5-.3.8-.8.8-1.4V6.5c0-.6-.3-1.1-.8-1.4zm-9.2 14.6l-6.8-3.9V8.6l6.8 3.9v7.2zm1-8.9L6.1 6.9l6.9-4 6.9 4-6.9 3.9zm7 4.9l-6.8 3.9v-7.2l6.8-3.9v7.2z"/></svg>
+        Laravel 11/12
+      </div>
+      <!-- MySQL -->
+      <div class="ticker-item">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+        MySQL 8 InnoDB
+      </div>
+      <!-- Redis -->
+      <div class="ticker-item">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        Redis Caching
+      </div>
+      <!-- Linux Bash -->
+      <div class="ticker-item">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zm2 4l4 4-4 4m6 0h6"/></svg>
+        Linux &amp; Bash
+      </div>
+      <!-- Docker -->
+      <div class="ticker-item">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.98 10.98h2.04v2.04h-2.04zm-3.06 0h2.04v2.04h-2.04zm-3.06 0h2.04v2.04H7.86zm6.12-3.06h2.04v2.04h-2.04zm-3.06 0h2.04v2.04h-2.04zm-3.06 0h2.04v2.04H7.86zm-3.06 3.06h2.04v2.04H4.8zm9.18-6.12h2.04v2.04h-2.04z"/></svg>
+        Docker Fleet
+      </div>
+      <!-- OpenSSL AES-256 -->
+      <div class="ticker-item">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+        OpenSSL / AES-256
+      </div>
+      <!-- Webhooks / Microservices -->
+      <div class="ticker-item">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l6 4.5-6 4.5z"/></svg>
+        HMAC-SHA256 Webhooks
+      </div>
+      <!-- Repeat clone for seamless infinite loop -->
+      <div class="ticker-item">
+        <svg viewBox="0 0 128 128" fill="currentColor"><path d="M60.1 53.6c-1.8 8.7-7 13.9-15.6 13.9h-7.8l-4.5 22.4h-9.9l9.3-46.6h17.8c7.4 0 12.5 3.5 10.7 10.3zm-17.5 5.5h6.6c3.9 0 6.6-2.1 7.3-6 .8-3.7-.9-5.5-4.8-5.5h-6.7l-2.4 11.5zm57.2-5.5c-1.8 8.7-7 13.9-15.6 13.9h-7.8l-4.5 22.4H62l9.3-46.6h17.8c7.4 0 12.5 3.5 10.7 10.3zm-17.5 5.5h6.6c3.9 0 6.6-2.1 7.3-6 .8-3.7-.9-5.5-4.8-5.5h-6.7l-2.4 11.5z"/></svg>
+        PHP 8.3
+      </div>
+      <div class="ticker-item">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.2 5.1L12.7.2c-.4-.2-.9-.2-1.3 0L2.8 5.1c-.5.3-.8.8-.8 1.4v9.9c0 .6.3 1.1.8 1.4l8.5 4.9c.2.1.4.2.7.2.2 0 .5-.1.7-.2l8.5-4.9c.5-.3.8-.8.8-1.4V6.5c0-.6-.3-1.1-.8-1.4zm-9.2 14.6l-6.8-3.9V8.6l6.8 3.9v7.2zm1-8.9L6.1 6.9l6.9-4 6.9 4-6.9 3.9zm7 4.9l-6.8 3.9v-7.2l6.8-3.9v7.2z"/></svg>
+        Laravel 11/12
+      </div>
+      <div class="ticker-item">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+        MySQL 8 InnoDB
+      </div>
+      <div class="ticker-item">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        Redis Caching
+      </div>
+    </div>
+  </div>
+
+  <main class="container">
+    
+    <!-- What I Do Section (Screenshot 3 Matching) -->
+    <section id="what-i-do" class="section-block">
+      <div class="section-header">
+        <div class="section-tag">// DOMAIN ARCHITECTURE</div>
+        <h2 class="section-heading">What I do?</h2>
+      </div>
+
+      <div class="what-i-do-grid">
+        <!-- Left Accordion List -->
+        <div class="accordion-list">
+          <div class="accordion-item open" onclick="toggleAcc(this)">
+            <div class="accordion-header">
+              <div class="acc-title-left">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"/></svg>
+                <span>Enterprise API &amp; Backend Engineering</span>
+              </div>
+              <svg class="chevron" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+            </div>
+            <div class="accordion-content">
+              Building strictly typed, contract-first REST &amp; GraphQL engines in Laravel 11/12 and PHP 8.3. Specializing in single-action controllers, idempotent state mutations, and resilient request sanitization pipelines.
+            </div>
+          </div>
+
+          <div class="accordion-item" onclick="toggleAcc(this)">
+            <div class="accordion-header">
+              <div class="acc-title-left">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2 1.5 3 3.5 3h9c2 0 3.5-1 3.5-3V7c0-2-1.5-3-3.5-3h-9C5.5 4 4 5 4 7z"/></svg>
+                <span>Distributed Caching &amp; High-Concurrency Databases</span>
+              </div>
+              <svg class="chevron" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+            </div>
+            <div class="accordion-content">
+              ACID transactional schema design, indexing strategies for B-trees, Redis cluster locks, and zero-downtime database migrations with automated row-level telemetry.
+            </div>
+          </div>
+
+          <div class="accordion-item" onclick="toggleAcc(this)">
+            <div class="accordion-header">
+              <div class="acc-title-left">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                <span>Cryptographic Licensing &amp; Webhook Reconciliation</span>
+              </div>
+              <svg class="chevron" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+            </div>
+            <div class="accordion-content">
+              OpenSSL AES-256-CBC node validation, automated hardware UUID fingerprinting, and HMAC-SHA256 signature verification for zero-loss payment gateway synchronization (FastSpring / Stripe).
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Interactive Matrix Code Buffer -->
+        <div class="matrix-terminal-card">
+          <div class="terminal-top-bar">
+            <div class="terminal-dots">
+              <span class="terminal-dot" style="background: #9d4edd;"></span>
+              <span class="terminal-dot" style="background: #00d8f6;"></span>
+              <span class="terminal-dot" style="background: #00f59b;"></span>
+            </div>
+            <span>[SYS_FEED] entropy_randomizer</span>
+          </div>
+          <div id="whatIDoMatrix" class="matrix-code-box" style="height: 220px;">
+            Compiling execution traces...
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Selected Systems Section -->
+    <section id="projects" class="section-block">
+      <div class="section-header">
+        <div class="section-tag">// PRODUCTION REPOSITORIES</div>
+        <h2 class="section-heading">Selected Projects</h2>
+      </div>
+
+      <div class="projects-grid">
+        <!-- Project 1 -->
+        <div class="project-card">
+          <div>
+            <span class="project-badge">LICENSING &amp; CRYPTOGRAPHY</span>
+            <h3 class="project-title">LicenceBot Helper Engine</h3>
+            <p class="project-desc">
+              Lightweight cryptographic validation agent for WordPress/WooCommerce plugins. Hardware UUID binding, AES-256-CBC tokenization, and anti-tamper caching.
+            </p>
+            <div class="project-tags">
+              <span class="project-tag">PHP 8.2</span>
+              <span class="project-tag">OpenSSL</span>
+              <span class="project-tag">AES-256</span>
+              <span class="project-tag">REST API</span>
+            </div>
+          </div>
+          <a href="https://github.com/alramim07/LicenceBot-Helper-Plugin" target="_blank" class="project-link">
+            Explore Repository ↗
+          </a>
+        </div>
+
+        <!-- Project 2 -->
+        <div class="project-card">
+          <div>
+            <span class="project-badge">PAYMENT GATEWAY</span>
+            <h3 class="project-title">FastSpring Unified Gateway</h3>
+            <p class="project-desc">
+              Modular payment processor with dynamic sub-gateways (bKash, Nagad, Cards). Handles HMAC-SHA256 webhook reconciliation and asynchronous retry queues.
+            </p>
+            <div class="project-tags">
+              <span class="project-tag">WooCommerce</span>
+              <span class="project-tag">HMAC-SHA256</span>
+              <span class="project-tag">Webhooks</span>
+              <span class="project-tag">Queue</span>
+            </div>
+          </div>
+          <a href="https://github.com/alramim07/fastspring-unified-wp-plugin" target="_blank" class="project-link">
+            Explore Repository ↗
+          </a>
+        </div>
+
+        <!-- Project 3 -->
+        <div class="project-card">
+          <div>
+            <span class="project-badge">ENTERPRISE POS</span>
+            <h3 class="project-title">Inventory &amp; POS Engine</h3>
+            <p class="project-desc">
+              Multi-warehouse inventory platform with barcode generation, ACID-compliant stock deducts, and invoice PDF generation under high concurrency.
+            </p>
+            <div class="project-tags">
+              <span class="project-tag">Laravel 11</span>
+              <span class="project-tag">MySQL 8</span>
+              <span class="project-tag">Redis</span>
+              <span class="project-tag">ACID</span>
+            </div>
+          </div>
+          <a href="https://github.com/alramim07/inventory-management-system" target="_blank" class="project-link">
+            Explore Repository ↗
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Futuristic Footer (Screenshot 2 Matching) -->
+  <footer id="contact">
+    <div class="container">
+      <div class="footer-main-row">
+        
+        <!-- Left: Socials + Contact Now Button (Replacing Likes) -->
+        <div class="footer-left-col">
+          <div class="footer-socials">
+            <a href="https://github.com/alramim07" target="_blank" class="footer-social-btn" title="GitHub">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+              </svg>
+            </a>
+            <a href="mailto:sakibramim4@gmail.com" class="footer-social-btn" title="Mail Dispatch">
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+            </a>
+          </div>
+
+          <!-- Contact Now pill button -->
+          <div>
+            <a href="mailto:sakibramim4@gmail.com?subject=Backend%20Engineering%20Inquiry" class="contact-now-btn">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+              </svg>
+              Contact Now ⚡
+            </a>
+          </div>
+        </div>
+
+        <!-- Middle: Section Directory (Replacing Built with / Styled with) -->
+        <div class="footer-section-directory">
+          <div class="directory-row">
+            <span class="directory-label">Primary:</span>
+            <a href="#home">Home // Overview</a>
+          </div>
+          <div class="directory-row">
+            <span class="directory-label">Architecture:</span>
+            <a href="#what-i-do">What I do? // Systems</a>
+          </div>
+          <div class="directory-row">
+            <span class="directory-label">Portfolio:</span>
+            <a href="#projects">Selected Projects</a>
+          </div>
+          <div class="directory-row">
+            <span class="directory-label">Contact:</span>
+            <a href="mailto:sakibramim4@gmail.com">sakibramim4@gmail.com</a>
+          </div>
+        </div>
+
+        <!-- Right: Live Cyber Terminal (Replacing Spotify Player) -->
+        <div class="footer-terminal-box">
+          <div class="footer-term-header">
+            <span>TERMINAL_OUTPUT.log</span>
+            <span style="color: var(--accent-green);">ONLINE</span>
+          </div>
+          <div id="footerTerminalOutput" class="footer-term-content">
+            Binding socket :8080...
+          </div>
+        </div>
+
+      </div>
+
+      <div class="footer-bottom-copy">
+        Copyright © 2026 Al Ramim. Engineered for high-throughput backend systems. Distributed via Edge CDN.
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Live Matrix Random Character Stream Generator
+    const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*()_+-=[]{}|;:,.<>?';
+    
+    function generateMatrixBuffer(lines, charsPerLine) {
+      let output = '';
+      for (let i = 0; i < lines; i++) {
+        let line = '';
+        for (let j = 0; j < charsPerLine; j++) {
+          line += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        output += line + (i < lines - 1 ? '\n' : '');
+      }
+      return output;
+    }
+
+    const heroBox = document.getElementById('heroMatrixCode');
+    const whatIDoBox = document.getElementById('whatIDoMatrix');
+    const footerTerm = document.getElementById('footerTerminalOutput');
+
+    function updateBuffers() {
+      if (heroBox) heroBox.innerText = generateMatrixBuffer(11, 48);
+      if (whatIDoBox) whatIDoBox.innerText = generateMatrixBuffer(9, 44);
+      if (footerTerm) footerTerm.innerText = generateMatrixBuffer(4, 40);
+    }
+
+    // Refresh stream every 120ms for smooth live hacker cyberpunk aesthetic
+    setInterval(updateBuffers, 120);
+    updateBuffers();
+
+    // Accordion interaction
+    function toggleAcc(el) {
+      document.querySelectorAll('.accordion-item').forEach(item => {
+        if (item !== el) item.classList.remove('open');
+      });
+      el.classList.toggle('open');
+    }
+  </script>
+</body>
+</html>
